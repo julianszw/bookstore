@@ -13,7 +13,8 @@ public class Book {
     private String isbn;
     private String description;
     private Double price;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
     private Author author;
     /*@OneToMany(mappedBy = "book")
     private List<Review> reviews = new ArrayList<>(); //?? al pedo*/

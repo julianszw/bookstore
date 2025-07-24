@@ -1,5 +1,6 @@
 package com.jszw.bookstore.dto;
 
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
@@ -8,9 +9,15 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BookDTO {
+
+    @NotBlank
     private String title;
+    @NotBlank
     private String isbn;
-    private String description;
+    @NotNull
+    @Positive
     private Double price;
+    private String description;
+    @NotNull
     private Long authorId;
 }

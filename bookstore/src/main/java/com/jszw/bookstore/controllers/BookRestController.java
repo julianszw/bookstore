@@ -2,6 +2,7 @@ package com.jszw.bookstore.controllers;
 
 import com.jszw.bookstore.dto.BookDTO;
 import com.jszw.bookstore.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class BookRestController {
     }
 
     @PostMapping
-    public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO dto) {
+    public ResponseEntity<BookDTO> createBook(@Valid @RequestBody BookDTO dto) {
         return ResponseEntity.ok(bookService.createBook(dto));
     }
 

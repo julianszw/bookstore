@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
@@ -48,9 +49,17 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO createBook(BookDTO dto) {
         Book book = bookMapper.toEntity(dto);
+
+        // Buscar el author y setearlo al libro
+        var author = authorRepository.findById(dto.getAuthorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + dto.getAuthorId()));
+
+        book.setAuthor(author);
+
         Book saved = bookRepository.save(book);
         return bookMapper.toDto(saved);
     }
+
 
     @Override
     public BookDTO updateBook(Long id, BookDTO dto) {
