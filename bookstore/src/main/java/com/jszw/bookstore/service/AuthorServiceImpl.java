@@ -23,36 +23,35 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public List<AuthorDTO> getAllAuthors() {
-        return authorRepository.findAll()
-                .stream()
+        return authorRepository.findAll().stream()
                 .map(authorMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public AuthorDTO getAuthorById(Long id) {
-        Author author = authorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
-        return authorMapper.toDto(author);
+        return authorMapper.toDto(
+                authorRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id))
+        );
     }
 
     @Override
     public AuthorDTO createAuthor(AuthorDTO dto) {
-        Author author = authorMapper.toEntity(dto);
-        Author saved = authorRepository.save(author);
-        return authorMapper.toDto(saved);
+        return authorMapper.toDto(
+                authorRepository.save(authorMapper.toEntity(dto))
+        );
     }
 
     @Override
     public AuthorDTO updateAuthor(Long id, AuthorDTO dto) {
-        Author existing = authorRepository.findById(id)
+        Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
 
-        existing.setFirstName(dto.getFirstName());
-        existing.setLastName(dto.getLastName());
+        author.setFirstName(dto.getFirstName());
+        author.setLastName(dto.getLastName());
 
-        Author updated = authorRepository.save(existing);
-        return authorMapper.toDto(updated);
+        return authorMapper.toDto(authorRepository.save(author));
     }
 
     @Override

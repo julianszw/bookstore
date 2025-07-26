@@ -1,7 +1,9 @@
 package com.jszw.bookstore.service;
 
+import com.jszw.bookstore.domain.Author;
 import com.jszw.bookstore.domain.Book;
-import com.jszw.bookstore.dto.BookDTO;
+import com.jszw.bookstore.dto.BookRequestDTO;
+import com.jszw.bookstore.dto.BookResponseDTO;
 import com.jszw.bookstore.exception.ResourceNotFoundException;
 import com.jszw.bookstore.mapper.BookMapper;
 import com.jszw.bookstore.repository.AuthorRepository;
@@ -12,8 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-
 public class BookServiceImpl implements BookService {
+
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final BookMapper bookMapper;
@@ -25,55 +27,55 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDTO> getBooks() {
+    public List<BookResponseDTO> getBooks() {
         return bookRepository.findAll()
                 .stream()
-                .map(bookMapper::toDto)
+                .map(bookMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public BookDTO findBookById(Long id) {
+    public BookResponseDTO findBookById(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
-        return bookMapper.toDto(book);
+        return bookMapper.toResponseDto(book);
     }
 
     @Override
-    public BookDTO findBookByIsbn(String isbn) {
+    public BookResponseDTO findBookByIsbn(String isbn) {
         Book book = bookRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with ISBN: " + isbn));
-        return bookMapper.toDto(book);
+        return bookMapper.toResponseDto(book);
     }
 
     @Override
-    public BookDTO createBook(BookDTO dto) {
-        Book book = bookMapper.toEntity(dto);
-
-        // Buscar el author y setearlo al libro
-        var author = authorRepository.findById(dto.getAuthorId())
+    public BookResponseDTO createBook(BookRequestDTO dto) {
+        Author author = authorRepository.findById(dto.getAuthorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + dto.getAuthorId()));
 
+        Book book = bookMapper.toEntity(dto);
         book.setAuthor(author);
 
-        Book saved = bookRepository.save(book);
-        return bookMapper.toDto(saved);
+        return bookMapper.toResponseDto(bookRepository.save(book));
     }
 
-
     @Override
-    public BookDTO updateBook(Long id, BookDTO dto) {
+    public BookResponseDTO updateBook(Long id, BookRequestDTO dto) {
         Book existing = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
 
-        // Podés actualizar solo los campos del DTO
         existing.setTitle(dto.getTitle());
         existing.setIsbn(dto.getIsbn());
         existing.setDescription(dto.getDescription());
         existing.setPrice(dto.getPrice());
 
+        // Opcional: permitir cambiar autor
+        Author author = authorRepository.findById(dto.getAuthorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + dto.getAuthorId()));
+        existing.setAuthor(author);
+
         Book updated = bookRepository.save(existing);
-        return bookMapper.toDto(updated);
+        return bookMapper.toResponseDto(updated);
     }
 
     @Override
@@ -84,14 +86,25 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
-    //Si querés hacer search con una query JPA custom, lo vemos luego.
-    //Te usé un filtro por keyword muy básico (title o description contiene la palabra).
     @Override
-    public List<BookDTO> searchBookByKeyword(String keyword) {
+    public List<BookResponseDTO> searchBookByKeyword(String keyword) {
         return bookRepository.findAll().stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
                         book.getDescription().toLowerCase().contains(keyword.toLowerCase()))
-                .map(bookMapper::toDto)
+                .map(bookMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<BookResponseDTO> findBooksByCategory(String categoryName) {
+        List<Book> books = bookRepository.findByCategoryNameIgnoreCase(categoryName);
+        if (books.isEmpty()) {
+            throw new ResourceNotFoundException("No books found in category: " + categoryName);
+        }
+
+        return books.stream()
+                .map(bookMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
 }

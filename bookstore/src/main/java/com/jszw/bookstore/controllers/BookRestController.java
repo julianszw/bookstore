@@ -1,6 +1,7 @@
 package com.jszw.bookstore.controllers;
 
-import com.jszw.bookstore.dto.BookDTO;
+import com.jszw.bookstore.dto.BookRequestDTO;
+import com.jszw.bookstore.dto.BookResponseDTO;
 import com.jszw.bookstore.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,27 +20,28 @@ public class BookRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookDTO>> getBooks() {
+    public ResponseEntity<List<BookResponseDTO>> getBooks() {
         return ResponseEntity.ok(bookService.getBooks());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
+    public ResponseEntity<BookResponseDTO> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.findBookById(id));
     }
 
+
     @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<BookDTO> getBookByIsbn(@PathVariable String isbn) {
+    public ResponseEntity<BookResponseDTO> getBookByIsbn(@PathVariable String isbn) {
         return ResponseEntity.ok(bookService.findBookByIsbn(isbn));
     }
 
     @PostMapping
-    public ResponseEntity<BookDTO> createBook(@Valid @RequestBody BookDTO dto) {
+    public ResponseEntity<BookResponseDTO> createBook(@Valid @RequestBody BookRequestDTO dto) {
         return ResponseEntity.ok(bookService.createBook(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookDTO dto) {
+    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable Long id, @RequestBody BookRequestDTO dto) {
         return ResponseEntity.ok(bookService.updateBook(id, dto));
     }
 
@@ -50,7 +52,7 @@ public class BookRestController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<BookDTO>> searchBooks(@RequestParam String keyword) {
+    public ResponseEntity<List<BookResponseDTO>> searchBooks(@RequestParam String keyword) {
         return ResponseEntity.ok(bookService.searchBookByKeyword(keyword));
     }
 }

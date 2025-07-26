@@ -1,16 +1,19 @@
 package com.jszw.bookstore.service;
 
-import com.jszw.bookstore.dto.BookDTO;
+import com.jszw.bookstore.dto.BookRequestDTO;
+import com.jszw.bookstore.dto.BookResponseDTO;
 
 import java.util.List;
 
 public interface BookService {
 
-    List<BookDTO> getBooks();
-    BookDTO findBookById(Long id);
-    BookDTO findBookByIsbn(String isbn);
-    BookDTO createBook(BookDTO dto);
-    BookDTO updateBook(Long id, BookDTO dto);
+    List<BookResponseDTO> getBooks();
+    BookResponseDTO findBookById(Long id);
+    BookResponseDTO findBookByIsbn(String isbn);
+    BookResponseDTO createBook(BookRequestDTO dto);
+    BookResponseDTO updateBook(Long id, BookRequestDTO dto);
     void deleteBookById(Long id);
-    List<BookDTO> searchBookByKeyword(String keyword);
+    List<BookResponseDTO> searchBookByKeyword(String keyword);
+    List<BookResponseDTO> findBooksByCategory(String categoryName);
+
 }

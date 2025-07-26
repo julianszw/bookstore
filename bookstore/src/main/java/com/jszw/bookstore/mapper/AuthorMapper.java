@@ -6,17 +6,23 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthorMapper {
+
     public AuthorDTO toDto(Author author) {
-        AuthorDTO dto = new AuthorDTO();
-        dto.setFirstName(author.getFirstName());
-        dto.setLastName(author.getLastName());
-        return dto;
+        return AuthorDTO.builder()
+                .id(author.getId())
+                .firstName(author.getFirstName())
+                .lastName(author.getLastName())
+                .build();
     }
 
     public Author toEntity(AuthorDTO dto) {
-        Author author = new Author();
-        author.setFirstName(dto.getFirstName());
-        author.setLastName(dto.getLastName());
-        return author;
+        return Author.builder()
+                .id(dto.getId()) // opcional, solo si querés permitir update desde dto con id
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .build();
     }
+
 }
+
+

@@ -1,33 +1,50 @@
 package com.jszw.bookstore.mapper;
 
 import com.jszw.bookstore.domain.Book;
-import com.jszw.bookstore.dto.BookDTO;
+import com.jszw.bookstore.dto.BookRequestDTO;
+import com.jszw.bookstore.dto.BookResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BookMapper {
 
-    public BookDTO toDto(Book book) {
-        BookDTO dto = new BookDTO();
-        dto.setIsbn(book.getIsbn());
-        dto.setTitle(book.getTitle());
-        dto.setDescription(book.getDescription());
-        dto.setPrice(book.getPrice());
+    private final AuthorMapper authorMapper;
 
-        if (book.getAuthor() != null) {
-            dto.setAuthorId(book.getAuthor().getId());
-        }
-
-        return dto;
+    public BookMapper(AuthorMapper authorMapper) {
+        this.authorMapper = authorMapper;
     }
 
-    public Book toEntity(BookDTO dto) {
-        Book book = new Book();
-        book.setIsbn(dto.getIsbn());
-        book.setTitle(dto.getTitle());
-        book.setDescription(dto.getDescription());
-        book.setPrice(dto.getPrice());
-        // El Author se setea desde el service, dado que el DTO solo contiene el ID
-        return book;
+    public BookRequestDTO toRequestDto(Book book) {
+        return BookRequestDTO.builder()
+                .isbn(book.getIsbn())
+                .title(book.getTitle())
+                .description(book.getDescription())
+                .price(book.getPrice())
+                .authorId(book.getAuthor().getId())
+                .category(book.getCategory())
+                .build();
+    }
+
+    public BookResponseDTO toResponseDto(Book book) {
+        return BookResponseDTO.builder()
+                .id(book.getId())
+                .isbn(book.getIsbn())
+                .title(book.getTitle())
+                .description(book.getDescription())
+                .price(book.getPrice())
+                .category(book.getCategory())
+                .author(authorMapper.toDto(book.getAuthor()))
+                .build();
+    }
+
+    public Book toEntity(BookRequestDTO dto) {
+        return Book.builder()
+                .isbn(dto.getIsbn())
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .price(dto.getPrice())
+                .category(dto.getCategory())
+                // el Author se setea desde BookServiceImpl
+                .build();
     }
 }

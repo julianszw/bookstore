@@ -16,8 +16,5 @@ public class User {
     private List<Review> reviews = new ArrayList<>();
     @ManyToMany
     private Set<Book> wishlist = new HashSet<>();
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Cart cart;
-    @OneToMany(mappedBy = "user")
-    private List<PurchaseOrder> purchaseOrders = new ArrayList<>();
+
 }
