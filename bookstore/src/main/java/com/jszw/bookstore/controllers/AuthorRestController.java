@@ -1,6 +1,7 @@
 package com.jszw.bookstore.controllers;
 
-import com.jszw.bookstore.dto.AuthorDTO;
+import com.jszw.bookstore.dto.AuthorResponseDTO;
+import com.jszw.bookstore.dto.requestDto.AuthorRequestDTO;
 import com.jszw.bookstore.service.AuthorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,22 +19,22 @@ public class AuthorRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
+    public ResponseEntity<List<AuthorResponseDTO>> getAllAuthors() {
         return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuthorDTO> getAuthorById(@PathVariable Long id) {
+    public ResponseEntity<AuthorResponseDTO> getAuthorById(@PathVariable Long id) {
         return ResponseEntity.ok(authorService.getAuthorById(id));
     }
 
     @PostMapping
-    public ResponseEntity<AuthorDTO> createAuthor(@RequestBody AuthorDTO dto) {
+    public ResponseEntity<AuthorResponseDTO> createAuthor(@RequestBody AuthorRequestDTO dto) {
         return ResponseEntity.ok(authorService.createAuthor(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AuthorDTO> updateAuthor(@PathVariable Long id, @RequestBody AuthorDTO dto) {
+    public ResponseEntity<AuthorResponseDTO> updateAuthor(@PathVariable Long id, @RequestBody AuthorRequestDTO dto) {
         return ResponseEntity.ok(authorService.updateAuthor(id, dto));
     }
 
@@ -44,7 +45,7 @@ public class AuthorRestController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<AuthorDTO>> searchAuthors(@RequestParam String keyword) {
+    public ResponseEntity<List<AuthorResponseDTO>> searchAuthors(@RequestParam String keyword) {
         return ResponseEntity.ok(authorService.searchByName(keyword));
     }
 }

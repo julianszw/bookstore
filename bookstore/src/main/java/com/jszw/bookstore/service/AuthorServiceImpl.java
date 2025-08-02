@@ -1,7 +1,8 @@
 package com.jszw.bookstore.service;
 
 import com.jszw.bookstore.domain.Author;
-import com.jszw.bookstore.dto.AuthorDTO;
+import com.jszw.bookstore.dto.AuthorResponseDTO;
+import com.jszw.bookstore.dto.requestDto.AuthorRequestDTO;
 import com.jszw.bookstore.exception.ResourceNotFoundException;
 import com.jszw.bookstore.mapper.AuthorMapper;
 import com.jszw.bookstore.repository.AuthorRepository;
@@ -22,14 +23,14 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<AuthorDTO> getAllAuthors() {
+    public List<AuthorResponseDTO> getAllAuthors() {
         return authorRepository.findAll().stream()
                 .map(authorMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public AuthorDTO getAuthorById(Long id) {
+    public AuthorResponseDTO getAuthorById(Long id) {
         return authorMapper.toDto(
                 authorRepository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id))
@@ -37,14 +38,14 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorDTO createAuthor(AuthorDTO dto) {
+    public AuthorResponseDTO createAuthor(AuthorRequestDTO dto) {
         return authorMapper.toDto(
                 authorRepository.save(authorMapper.toEntity(dto))
         );
     }
 
     @Override
-    public AuthorDTO updateAuthor(Long id, AuthorDTO dto) {
+    public AuthorResponseDTO updateAuthor(Long id, AuthorRequestDTO dto) {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
 
@@ -63,7 +64,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<AuthorDTO> searchByName(String keyword) {
+    public List<AuthorResponseDTO> searchByName(String keyword) {
         return authorRepository
                 .findByFirstNameOrLastNameContainingIgnoreCase(keyword, keyword)
                 .stream()

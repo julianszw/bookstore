@@ -1,14 +1,16 @@
 package com.jszw.bookstore.service;
 
-import com.jszw.bookstore.dto.AuthorDTO;
+
+import com.jszw.bookstore.dto.AuthorResponseDTO;
+import com.jszw.bookstore.dto.requestDto.AuthorRequestDTO;
 
 import java.util.List;
 
 public interface AuthorService {
-    List<AuthorDTO> getAllAuthors();
-    AuthorDTO getAuthorById(Long id);
-    AuthorDTO createAuthor(AuthorDTO dto);
-    AuthorDTO updateAuthor(Long id, AuthorDTO dto);
+    List<AuthorResponseDTO> getAllAuthors();
+    AuthorResponseDTO getAuthorById(Long id);
+    AuthorResponseDTO createAuthor(AuthorRequestDTO dto);
+    AuthorResponseDTO updateAuthor(Long id, AuthorRequestDTO dto);
     void deleteAuthor(Long id);
-    List<AuthorDTO> searchByName(String keyword);
+    List<AuthorResponseDTO> searchByName(String keyword);
 }

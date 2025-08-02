@@ -7,15 +7,12 @@ import lombok.*;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class BookEdition {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String publisher;
+    @ManyToOne @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
     private int year;
     private String language;
-
-    @ManyToOne
-    @JoinColumn(name = "book_id")
+    @ManyToOne @JoinColumn(name = "book_id")
     private Book book;
 }

@@ -1,8 +1,10 @@
 package com.jszw.bookstore.mapper;
 
 import com.jszw.bookstore.domain.Book;
-import com.jszw.bookstore.dto.BookRequestDTO;
-import com.jszw.bookstore.dto.BookResponseDTO;
+
+import com.jszw.bookstore.dto.requestDto.BookRequestDTO;
+import com.jszw.bookstore.dto.responseDto.BookResponseDTO;
+import com.jszw.bookstore.mapper.AuthorMapper;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,17 +16,6 @@ public class BookMapper {
         this.authorMapper = authorMapper;
     }
 
-    public BookRequestDTO toRequestDto(Book book) {
-        return BookRequestDTO.builder()
-                .isbn(book.getIsbn())
-                .title(book.getTitle())
-                .description(book.getDescription())
-                .price(book.getPrice())
-                .authorId(book.getAuthor().getId())
-                .category(book.getCategory())
-                .build();
-    }
-
     public BookResponseDTO toResponseDto(Book book) {
         return BookResponseDTO.builder()
                 .id(book.getId())
@@ -32,8 +23,8 @@ public class BookMapper {
                 .title(book.getTitle())
                 .description(book.getDescription())
                 .price(book.getPrice())
-                .category(book.getCategory())
                 .author(authorMapper.toDto(book.getAuthor()))
+                .category(book.getCategory())
                 .build();
     }
 
@@ -43,8 +34,7 @@ public class BookMapper {
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .price(dto.getPrice())
-                .category(dto.getCategory())
-                // el Author se setea desde BookServiceImpl
+                // author, category y publisher se setean manualmente desde el Service
                 .build();
     }
 }

@@ -1,7 +1,7 @@
 package com.jszw.bookstore.controllers;
 
-import com.jszw.bookstore.dto.BookRequestDTO;
-import com.jszw.bookstore.dto.BookResponseDTO;
+import com.jszw.bookstore.dto.requestDto.BookRequestDTO;
+import com.jszw.bookstore.dto.responseDto.BookResponseDTO;
 import com.jszw.bookstore.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,7 @@
-package com.jszw.bookstore.dto;
+package com.jszw.bookstore.dto.requestDto;
 
 import com.jszw.bookstore.domain.Category;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
@@ -8,12 +9,18 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BookResponseDTO {
-    private Long id;
+public class BookRequestDTO {
+
+    @NotBlank
     private String title;
+    @NotBlank
     private String isbn;
+    @NotNull
+    @Positive
     private Double price;
     private String description;
-    private AuthorDTO author;
+    @NotNull
+    private Long authorId;
+    @NotNull
     private Category category;
 }
