@@ -1,11 +1,12 @@
 // Review.java
 package com.jszw.bookstore.domain;
 
+import com.jszw.bookstore.converter.ReviewRatingConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "reviews")
+@Table(name = "bs_reviews")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Review {
 
@@ -21,9 +22,10 @@ public class Review {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ReviewRatingConverter.class)
     @Column(nullable = false)
     private ReviewRating rating;
+
 
     @Column(columnDefinition = "TEXT")
     private String comment;

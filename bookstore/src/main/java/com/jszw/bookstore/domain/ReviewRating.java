@@ -21,5 +21,14 @@ public enum ReviewRating {
     public double getValue() {
         return value;
     }
+
+    public static ReviewRating fromValue(double value) {
+        for (ReviewRating rating : values()) {
+            if (Double.compare(rating.value, value) == 0) {
+                return rating;
+            }
+        }
+        throw new IllegalArgumentException("Valor de rating inválido: " + value);
+    }
 }
 

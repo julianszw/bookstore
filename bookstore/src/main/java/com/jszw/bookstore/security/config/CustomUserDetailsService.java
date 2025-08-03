@@ -1,4 +1,4 @@
-package com.jszw.bookstore.security;
+package com.jszw.bookstore.security.config;
 
 import com.jszw.bookstore.domain.User;
 import com.jszw.bookstore.repository.UserRepository;
@@ -19,12 +19,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .roles("USER") // O cargar roles desde la entidad si se implementa
+                .password(user.getPassword()) // ya debe estar encriptada
+                .roles("USER") // opcional: si tenés entidad Role, podés mapear roles reales
                 .build();
     }
 }

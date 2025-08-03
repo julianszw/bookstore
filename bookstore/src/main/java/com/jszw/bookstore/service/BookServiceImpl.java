@@ -2,12 +2,14 @@ package com.jszw.bookstore.service;
 
 import com.jszw.bookstore.domain.Author;
 import com.jszw.bookstore.domain.Book;
+import com.jszw.bookstore.domain.Category;
 import com.jszw.bookstore.dto.requestDto.BookRequestDTO;
 import com.jszw.bookstore.dto.responseDto.BookResponseDTO;
 import com.jszw.bookstore.exception.ResourceNotFoundException;
 import com.jszw.bookstore.mapper.BookMapper;
 import com.jszw.bookstore.repository.AuthorRepository;
 import com.jszw.bookstore.repository.BookRepository;
+import com.jszw.bookstore.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +20,18 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
+    private final CategoryRepository categoryRepository;
     private final BookMapper bookMapper;
 
-    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository, BookMapper bookMapper) {
+    public BookServiceImpl(
+            BookRepository bookRepository,
+            AuthorRepository authorRepository,
+            CategoryRepository categoryRepository,
+            BookMapper bookMapper
+    ) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
+        this.categoryRepository = categoryRepository;
         this.bookMapper = bookMapper;
     }
 
@@ -53,8 +62,12 @@ public class BookServiceImpl implements BookService {
         Author author = authorRepository.findById(dto.getAuthorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + dto.getAuthorId()));
 
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + dto.getCategoryId()));
+
         Book book = bookMapper.toEntity(dto);
         book.setAuthor(author);
+        book.setCategory(category);
 
         return bookMapper.toResponseDto(bookRepository.save(book));
     }
@@ -69,13 +82,15 @@ public class BookServiceImpl implements BookService {
         existing.setDescription(dto.getDescription());
         existing.setPrice(dto.getPrice());
 
-        // Opcional: permitir cambiar autor
         Author author = authorRepository.findById(dto.getAuthorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + dto.getAuthorId()));
         existing.setAuthor(author);
 
-        Book updated = bookRepository.save(existing);
-        return bookMapper.toResponseDto(updated);
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + dto.getCategoryId()));
+        existing.setCategory(category);
+
+        return bookMapper.toResponseDto(bookRepository.save(existing));
     }
 
     @Override
@@ -90,7 +105,7 @@ public class BookServiceImpl implements BookService {
     public List<BookResponseDTO> searchBookByKeyword(String keyword) {
         return bookRepository.findAll().stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
-                        book.getDescription().toLowerCase().contains(keyword.toLowerCase()))
+                        (book.getDescription() != null && book.getDescription().toLowerCase().contains(keyword.toLowerCase())))
                 .map(bookMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
@@ -106,5 +121,4 @@ public class BookServiceImpl implements BookService {
                 .map(bookMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
-
 }
