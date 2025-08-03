@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "bs_book_editions")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class BookEdition {
 

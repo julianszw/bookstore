@@ -5,6 +5,7 @@ import lombok.*;
 import java.util.*;
 
 @Entity
+@Table(name = "bs_users")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,8 +13,6 @@ public class User {
     private String username;
     private String email;
     private String password;
-    @OneToMany(mappedBy = "user")
-    private List<Review> reviews = new ArrayList<>();
     @ManyToMany
     private Set<Book> wishlist = new HashSet<>();
 

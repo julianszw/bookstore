@@ -5,15 +5,27 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "reviews")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Review {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer rating;
-    @Column(length = 2000)
-    private String comment;
-    @ManyToOne
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @ManyToOne
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ReviewRating rating;
+
+    @Column(columnDefinition = "TEXT")
+    private String comment;
 }
+

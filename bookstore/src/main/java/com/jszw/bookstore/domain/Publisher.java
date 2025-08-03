@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "bs_publishers")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Publisher {
 

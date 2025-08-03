@@ -1,4 +1,4 @@
-package com.jszw.bookstore.dto;
+package com.jszw.bookstore.dto.responseDto;
 
 import lombok.*;
 

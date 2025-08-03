@@ -1,8 +1,6 @@
 package com.jszw.bookstore.dto.responseDto;
 
 import com.jszw.bookstore.domain.Category;
-import com.jszw.bookstore.dto.AuthorResponseDTO;
-import com.jszw.bookstore.dto.requestDto.AuthorRequestDTO;
 import lombok.*;
 
 @Getter

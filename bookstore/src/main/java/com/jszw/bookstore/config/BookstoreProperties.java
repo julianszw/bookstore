@@ -12,7 +12,6 @@ public class BookstoreProperties {
     private String supportEmail;
     private int paginationDefaultPageSize;
 
-    // Getters y Setters
 
     public String getName() {
         return name;

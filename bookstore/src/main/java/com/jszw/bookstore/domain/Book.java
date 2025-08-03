@@ -5,6 +5,7 @@ import lombok.*;
 import java.util.*;
 
 @Entity
+@Table(name = "bs_books")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Book {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

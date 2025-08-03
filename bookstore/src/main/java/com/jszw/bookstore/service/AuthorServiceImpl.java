@@ -1,7 +1,7 @@
 package com.jszw.bookstore.service;
 
 import com.jszw.bookstore.domain.Author;
-import com.jszw.bookstore.dto.AuthorResponseDTO;
+import com.jszw.bookstore.dto.responseDto.AuthorResponseDTO;
 import com.jszw.bookstore.dto.requestDto.AuthorRequestDTO;
 import com.jszw.bookstore.exception.ResourceNotFoundException;
 import com.jszw.bookstore.mapper.AuthorMapper;

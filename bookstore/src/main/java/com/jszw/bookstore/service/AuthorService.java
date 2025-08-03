@@ -1,7 +1,7 @@
 package com.jszw.bookstore.service;
 
 
-import com.jszw.bookstore.dto.AuthorResponseDTO;
+import com.jszw.bookstore.dto.responseDto.AuthorResponseDTO;
 import com.jszw.bookstore.dto.requestDto.AuthorRequestDTO;
 
 import java.util.List;

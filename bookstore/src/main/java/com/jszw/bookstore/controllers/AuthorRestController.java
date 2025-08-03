@@ -1,6 +1,6 @@
 package com.jszw.bookstore.controllers;
 
-import com.jszw.bookstore.dto.AuthorResponseDTO;
+import com.jszw.bookstore.dto.responseDto.AuthorResponseDTO;
 import com.jszw.bookstore.dto.requestDto.AuthorRequestDTO;
 import com.jszw.bookstore.service.AuthorService;
 import org.springframework.http.ResponseEntity;
