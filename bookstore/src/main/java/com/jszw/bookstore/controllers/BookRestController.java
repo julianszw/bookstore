@@ -4,20 +4,18 @@ import com.jszw.bookstore.dto.requestDto.BookRequestDTO;
 import com.jszw.bookstore.dto.responseDto.BookResponseDTO;
 import com.jszw.bookstore.service.BookService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/books")
 public class BookRestController {
 
     private final BookService bookService;
-
-    public BookRestController(BookService bookService) {
-        this.bookService = bookService;
-    }
 
     @GetMapping
     public ResponseEntity<List<BookResponseDTO>> getBooks() {
@@ -29,30 +27,31 @@ public class BookRestController {
         return ResponseEntity.ok(bookService.findBookById(id));
     }
 
-
     @GetMapping("/isbn/{isbn}")
     public ResponseEntity<BookResponseDTO> getBookByIsbn(@PathVariable String isbn) {
         return ResponseEntity.ok(bookService.findBookByIsbn(isbn));
     }
 
     @PostMapping
-    public ResponseEntity<BookResponseDTO> createBook(@Valid @RequestBody BookRequestDTO dto) {
+    public ResponseEntity<BookResponseDTO> create(@Valid @RequestBody BookRequestDTO dto) {
         return ResponseEntity.ok(bookService.createBook(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable Long id, @RequestBody BookRequestDTO dto) {
+    public ResponseEntity<BookResponseDTO> update(@PathVariable Long id,
+                                                  @Valid @RequestBody BookRequestDTO dto) {
         return ResponseEntity.ok(bookService.updateBook(id, dto));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        bookService.deleteBookById(id);
-        return ResponseEntity.noContent().build();
+    @PatchMapping("/{id}")
+    public ResponseEntity<BookResponseDTO> patch(@PathVariable Long id,
+                                                 @RequestBody BookRequestDTO dto) {
+        return ResponseEntity.ok(bookService.patchBook(id, dto));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<BookResponseDTO>> searchBooks(@RequestParam String keyword) {
-        return ResponseEntity.ok(bookService.searchBookByKeyword(keyword));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        bookService.deleteBookById(id);
+        return ResponseEntity.noContent().build();
     }
 }

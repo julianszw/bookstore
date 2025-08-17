@@ -1,7 +1,6 @@
 package com.jszw.bookstore.mapper;
 
 import com.jszw.bookstore.domain.BookEdition;
-import com.jszw.bookstore.dto.requestDto.BookEditionRequestDTO;
 import com.jszw.bookstore.dto.responseDto.BookEditionResponseDTO;
 import org.springframework.stereotype.Component;
 
@@ -14,16 +13,12 @@ public class BookEditionMapper {
         this.publisherMapper = publisherMapper;
     }
 
-    public BookEdition toEntity(BookEditionRequestDTO dto) {
-        return BookEdition.builder()
-                .year(dto.getYear())
-                .build(); // El book y el publisher se setean en el servicio
-    }
-
     public BookEditionResponseDTO toDto(BookEdition entity) {
+        if (entity == null) return null;
         return BookEditionResponseDTO.builder()
                 .id(entity.getId())
-                .year(entity.getYear())
+                .edition(entity.getEditionLabel())
+                .year(entity.getPublishedYear())
                 .publisher(publisherMapper.toDto(entity.getPublisher()))
                 .build();
     }

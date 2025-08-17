@@ -1,4 +1,4 @@
-package com.jszw.bookstore.config;
+package com.jszw.bookstore.security.config;
 
 import com.jszw.bookstore.security.config.CustomUserDetailsService;
 import com.jszw.bookstore.security.jwt.JwtAuthEntryPoint;
@@ -49,11 +49,22 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/bookstore/api/v1/auth/**").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers(
+                                "/auth/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/error",
+                                "/books"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                );
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
+
+
 }

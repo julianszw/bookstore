@@ -6,6 +6,10 @@ import com.jszw.bookstore.dto.responseDto.CategoryResponseDTO;
 import java.util.List;
 
 public interface CategoryService {
-    CategoryResponseDTO createCategory(CategoryRequestDTO dto);
-    List<CategoryResponseDTO> getAllCategories();
+    List<CategoryResponseDTO> getCategories();
+    CategoryResponseDTO findById(Long id);
+    CategoryResponseDTO create(CategoryRequestDTO dto);
+    CategoryResponseDTO update(Long id, CategoryRequestDTO dto);
+    CategoryResponseDTO patch(Long id, CategoryRequestDTO dto);
+    void deleteById(Long id);
 }

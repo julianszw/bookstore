@@ -1,40 +1,43 @@
 package com.jszw.bookstore.mapper;
 
 import com.jszw.bookstore.domain.Book;
-
-import com.jszw.bookstore.dto.requestDto.BookRequestDTO;
+import com.jszw.bookstore.domain.Category;
+import com.jszw.bookstore.domain.Author;
+import com.jszw.bookstore.dto.responseDto.AuthorResponseDTO;
 import com.jszw.bookstore.dto.responseDto.BookResponseDTO;
-import com.jszw.bookstore.mapper.AuthorMapper;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class BookMapper {
 
-    private final AuthorMapper authorMapper;
-
-    public BookMapper(AuthorMapper authorMapper) {
-        this.authorMapper = authorMapper;
-    }
-
-    public BookResponseDTO toResponseDto(Book book) {
+    public BookResponseDTO toDto(Book book) {
+        if (book == null) return null;
         return BookResponseDTO.builder()
                 .id(book.getId())
-                .isbn(book.getIsbn())
                 .title(book.getTitle())
+                .isbn(book.getIsbn())
                 .description(book.getDescription())
-                .price(book.getPrice())
-                .author(authorMapper.toDto(book.getAuthor()))
-                .category(book.getCategory())
+                .author(toAuthorDto(book.getAuthor()))
+                .categories(toCategoryNames(book.getCategories()))
                 .build();
     }
 
-    public Book toEntity(BookRequestDTO dto) {
-        return Book.builder()
-                .isbn(dto.getIsbn())
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .price(dto.getPrice())
-                // author, category y publisher se setean manualmente desde el Service
+    private AuthorResponseDTO toAuthorDto(Author author) {
+        if (author == null) return null;
+        return AuthorResponseDTO.builder()
+                .id(author.getId())
+                .name(author.getName())
+                .bio(author.getBio())
                 .build();
+    }
+
+    private Set<String> toCategoryNames(Set<Category> categories) {
+        if (categories == null || categories.isEmpty()) return Set.of();
+        return categories.stream()
+                .map(Category::getName)
+                .collect(Collectors.toSet());
     }
 }

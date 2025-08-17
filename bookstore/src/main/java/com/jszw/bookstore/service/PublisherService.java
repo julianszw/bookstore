@@ -6,6 +6,10 @@ import com.jszw.bookstore.dto.responseDto.PublisherResponseDTO;
 import java.util.List;
 
 public interface PublisherService {
-    PublisherResponseDTO createPublisher(PublisherRequestDTO dto);
-    List<PublisherResponseDTO> getAll();
+    List<PublisherResponseDTO> getPublishers();
+    PublisherResponseDTO findById(Long id);
+    PublisherResponseDTO create(PublisherRequestDTO dto);
+    PublisherResponseDTO update(Long id, PublisherRequestDTO dto);
+    PublisherResponseDTO patch(Long id, PublisherRequestDTO dto);
+    void deleteById(Long id);
 }

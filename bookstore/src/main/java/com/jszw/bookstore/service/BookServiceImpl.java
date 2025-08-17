@@ -1,4 +1,4 @@
-package com.jszw.bookstore.service;
+package com.jszw.bookstore.service.impl;
 
 import com.jszw.bookstore.domain.Author;
 import com.jszw.bookstore.domain.Book;
@@ -10,163 +10,140 @@ import com.jszw.bookstore.mapper.BookMapper;
 import com.jszw.bookstore.repository.AuthorRepository;
 import com.jszw.bookstore.repository.BookRepository;
 import com.jszw.bookstore.repository.CategoryRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.jszw.bookstore.service.BookService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class BookServiceImpl implements BookService {
-
-    private final Logger log = LoggerFactory.getLogger(BookServiceImpl.class);
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
     private final BookMapper bookMapper;
 
-    public BookServiceImpl(
-            BookRepository bookRepository,
-            AuthorRepository authorRepository,
-            CategoryRepository categoryRepository,
-            BookMapper bookMapper
-    ) {
-        this.bookRepository = bookRepository;
-        this.authorRepository = authorRepository;
-        this.categoryRepository = categoryRepository;
-        this.bookMapper = bookMapper;
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> getBooks() {
-        log.info("Fetching all books");
-        List<BookResponseDTO> books = bookRepository.findAll()
-                .stream()
-                .map(bookMapper::toResponseDto)
-                .collect(Collectors.toList());
-        log.info("Found {} books", books.size());
-        return books;
+        return bookRepository.findAll().stream().map(bookMapper::toDto).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookResponseDTO findBookById(Long id) {
-        log.info("Searching book by ID: {}", id);
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Book not found with ID: {}", id);
-                    return new ResourceNotFoundException("Book not found with id: " + id);
-                });
-        log.info("Found book: {}", book.getTitle());
-        return bookMapper.toResponseDto(book);
+        return bookMapper.toDto(getOrThrow(id));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookResponseDTO findBookByIsbn(String isbn) {
-        log.info("Searching book by ISBN: {}", isbn);
         Book book = bookRepository.findByIsbn(isbn)
-                .orElseThrow(() -> {
-                    log.warn("Book not found with ISBN: {}", isbn);
-                    return new ResourceNotFoundException("Book not found with ISBN: " + isbn);
-                });
-        log.info("Found book: {}", book.getTitle());
-        return bookMapper.toResponseDto(book);
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with isbn=" + isbn));
+        return bookMapper.toDto(book);
     }
 
     @Override
     public BookResponseDTO createBook(BookRequestDTO dto) {
-        log.info("Creating book: {} with ISBN {}", dto.getTitle(), dto.getIsbn());
-
         Author author = authorRepository.findById(dto.getAuthorId())
-                .orElseThrow(() -> {
-                    log.warn("Author not found with ID: {}", dto.getAuthorId());
-                    return new ResourceNotFoundException("Author not found with id: " + dto.getAuthorId());
-                });
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found: id=" + dto.getAuthorId()));
 
-        Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> {
-                    log.warn("Category not found with ID: {}", dto.getCategoryId());
-                    return new ResourceNotFoundException("Category not found with id: " + dto.getCategoryId());
-                });
+        Set<Category> categories = resolveCategories(dto.getCategoryIds());
 
-        Book book = bookMapper.toEntity(dto);
-        book.setAuthor(author);
-        book.setCategory(category);
+        Book entity = Book.builder()
+                .title(dto.getTitle())
+                .isbn(dto.getIsbn())
+                .description(dto.getDescription())
+                .author(author)
+                .categories(categories)
+                .build();
 
-        Book saved = bookRepository.save(book);
-        log.info("Book created with ID: {}", saved.getId());
-        return bookMapper.toResponseDto(saved);
+        return bookMapper.toDto(bookRepository.save(entity));
     }
 
     @Override
     public BookResponseDTO updateBook(Long id, BookRequestDTO dto) {
-        log.info("Updating book with ID: {}", id);
+        Book existing = getOrThrow(id);
 
-        Book existing = bookRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Book not found for update with ID: {}", id);
-                    return new ResourceNotFoundException("Book not found with id: " + id);
-                });
+        Author author = authorRepository.findById(dto.getAuthorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found: id=" + dto.getAuthorId()));
+        Set<Category> categories = resolveCategories(dto.getCategoryIds());
 
         existing.setTitle(dto.getTitle());
         existing.setIsbn(dto.getIsbn());
         existing.setDescription(dto.getDescription());
-        existing.setPrice(dto.getPrice());
-
-        Author author = authorRepository.findById(dto.getAuthorId())
-                .orElseThrow(() -> {
-                    log.warn("Author not found with ID: {}", dto.getAuthorId());
-                    return new ResourceNotFoundException("Author not found with id: " + dto.getAuthorId());
-                });
         existing.setAuthor(author);
+        existing.setCategories(categories);
 
-        Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> {
-                    log.warn("Category not found with ID: {}", dto.getCategoryId());
-                    return new ResourceNotFoundException("Category not found with id: " + dto.getCategoryId());
-                });
-        existing.setCategory(category);
+        return bookMapper.toDto(existing);
+    }
 
-        Book updated = bookRepository.save(existing);
-        log.info("Book updated with ID: {}", updated.getId());
-        return bookMapper.toResponseDto(updated);
+    @Override
+    public BookResponseDTO patchBook(Long id, BookRequestDTO dto) {
+        Book existing = getOrThrow(id);
+
+        Optional.ofNullable(dto.getTitle()).ifPresent(existing::setTitle);
+        Optional.ofNullable(dto.getIsbn()).ifPresent(existing::setIsbn);
+        Optional.ofNullable(dto.getDescription()).ifPresent(existing::setDescription);
+
+        if (dto.getAuthorId() != null) {
+            Author author = authorRepository.findById(dto.getAuthorId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Author not found: id=" + dto.getAuthorId()));
+            existing.setAuthor(author);
+        }
+
+        if (dto.getCategoryIds() != null) {
+            existing.setCategories(resolveCategories(dto.getCategoryIds()));
+        }
+
+        return bookMapper.toDto(existing);
     }
 
     @Override
     public void deleteBookById(Long id) {
-        log.info("Attempting to delete book with ID: {}", id);
-        if (!bookRepository.existsById(id)) {
-            log.warn("Book not found for deletion with ID: {}", id);
-            throw new ResourceNotFoundException("Book not found with id: " + id);
-        }
-        bookRepository.deleteById(id);
-        log.info("Book deleted with ID: {}", id);
+        Book existing = getOrThrow(id);
+        bookRepository.delete(existing);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> searchBookByKeyword(String keyword) {
-        log.info("Searching books by keyword: '{}'", keyword);
-        List<BookResponseDTO> results = bookRepository.findAll().stream()
-                .filter(book -> book.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
-                        (book.getDescription() != null && book.getDescription().toLowerCase().contains(keyword.toLowerCase())))
-                .map(bookMapper::toResponseDto)
-                .collect(Collectors.toList());
-        log.info("Found {} books matching keyword '{}'", results.size(), keyword);
-        return results;
+        // Simplificado: filtrar en memoria (idealmente usar Query/Spec)
+        return bookRepository.findAll().stream()
+                .filter(b -> {
+                    String k = keyword == null ? "" : keyword.toLowerCase();
+                    return (b.getTitle() != null && b.getTitle().toLowerCase().contains(k)) ||
+                            (b.getIsbn() != null && b.getIsbn().toLowerCase().contains(k)) ||
+                            (b.getDescription() != null && b.getDescription().toLowerCase().contains(k));
+                })
+                .map(bookMapper::toDto)
+                .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookResponseDTO> findBooksByCategory(String categoryName) {
-        log.info("Searching books in category: '{}'", categoryName);
-        List<Book> books = bookRepository.findByCategoryNameIgnoreCase(categoryName);
-        if (books.isEmpty()) {
-            log.warn("No books found in category: '{}'", categoryName);
-            throw new ResourceNotFoundException("No books found in category: " + categoryName);
+        return bookRepository.findAll().stream()
+                .filter(b -> b.getCategories().stream().anyMatch(c -> c.getName().equalsIgnoreCase(categoryName)))
+                .map(bookMapper::toDto)
+                .toList();
+    }
+
+    private Book getOrThrow(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found: id=" + id));
+    }
+
+    private Set<Category> resolveCategories(Set<Long> ids) {
+        if (ids == null || ids.isEmpty()) return new HashSet<>();
+        List<Category> list = categoryRepository.findAllById(ids);
+        if (list.size() != ids.size()) {
+            throw new ResourceNotFoundException("One or more categories not found: " + ids);
         }
-        log.info("Found {} books in category '{}'", books.size(), categoryName);
-        return books.stream()
-                .map(bookMapper::toResponseDto)
-                .collect(Collectors.toList());
+        return new HashSet<>(list);
     }
 }

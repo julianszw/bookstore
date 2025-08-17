@@ -1,4 +1,4 @@
-package com.example.demo.security.payload;
+package com.jszw.bookstore.security.payload;
 
 public class JwtResponse {
 

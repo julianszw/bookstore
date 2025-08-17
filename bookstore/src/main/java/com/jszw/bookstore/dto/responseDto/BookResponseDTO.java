@@ -1,19 +1,24 @@
 package com.jszw.bookstore.dto.responseDto;
 
-import com.jszw.bookstore.domain.Category;
 import lombok.*;
+import java.util.Set;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+/**
+ * Read-only view of a Book with a light embedded Author and category names.
+ */
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 public class BookResponseDTO {
+
     private Long id;
     private String title;
     private String isbn;
-    private Double price;
     private String description;
+
+    // Embedded author (id, name, bio)
     private AuthorResponseDTO author;
-    private Category category;
+
+    // Category names for easy display
+    private Set<String> categories;
 }
