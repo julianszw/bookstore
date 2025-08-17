@@ -1,4 +1,4 @@
-package com.jszw.bookstore.service.impl;
+package com.jszw.bookstore.service;
 
 import com.jszw.bookstore.domain.Book;
 import com.jszw.bookstore.domain.BookEdition;
