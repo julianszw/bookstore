@@ -1,14 +1,19 @@
 package com.jszw.bookstore.repository;
 
 import com.jszw.bookstore.domain.Author;
-import com.jszw.bookstore.domain.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AuthorRepository extends JpaRepository<Author, Long> {
-    Optional<Author> findById(Long id);
-    List<Author> findByFirstNameOrLastNameContainingIgnoreCase(String keyword1, String keyword2);
 
+    // Búsqueda simple por el único nombre
+    List<Author> findByNameContainingIgnoreCase(String name);
+
+    // Alternativa equivalente con JPQL (por si preferís un único método "search")
+    @Query("select a from Author a where lower(a.name) like lower(concat('%', ?1, '%'))")
+    List<Author> search(String keyword);
+
+    boolean existsByNameIgnoreCase(String name);
 }
