@@ -11,6 +11,7 @@ import java.util.Set;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
+@Table(name = "authors")
 public class Author {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

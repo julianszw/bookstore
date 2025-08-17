@@ -52,7 +52,7 @@ public class BookEditionServiceImpl implements BookEditionService {
         BookEdition edition = BookEdition.builder()
                 .book(book)
                 .publisher(publisher)
-                .editionLabel(dto.getEdition())
+                .editionNumber(dto.getEdition())
                 .publishedYear(dto.getYear())
                 .build();
 
@@ -70,8 +70,11 @@ public class BookEditionServiceImpl implements BookEditionService {
 
         existing.setBook(book);
         existing.setPublisher(publisher);
-        existing.setEditionLabel(dto.getEdition());
+        existing.setEditionNumber(dto.getEdition());
         existing.setPublishedYear(dto.getYear());
+
+        // Opcional: explícito para evitar depender de dirty checking
+        repository.save(existing);
 
         return mapper.toDto(existing);
     }
@@ -92,8 +95,11 @@ public class BookEditionServiceImpl implements BookEditionService {
             existing.setPublisher(p);
         });
 
-        Optional.ofNullable(dto.getEdition()).ifPresent(existing::setEditionLabel);
+        Optional.ofNullable(dto.getEdition()).ifPresent(existing::setEditionNumber);
         Optional.ofNullable(dto.getYear()).ifPresent(existing::setPublishedYear);
+
+        // Opcional: explícito para evitar depender de dirty checking
+        repository.save(existing);
 
         return mapper.toDto(existing);
     }

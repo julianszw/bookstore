@@ -17,7 +17,7 @@ public class BookEditionMapper {
         if (entity == null) return null;
         return BookEditionResponseDTO.builder()
                 .id(entity.getId())
-                .edition(entity.getEditionLabel())
+                .edition(entity.getEditionNumber())
                 .year(entity.getPublishedYear())
                 .publisher(publisherMapper.toDto(entity.getPublisher()))
                 .build();

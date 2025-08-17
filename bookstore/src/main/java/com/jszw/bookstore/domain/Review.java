@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "bs_reviews")
+@Table(name = "reviews")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Review {
 
