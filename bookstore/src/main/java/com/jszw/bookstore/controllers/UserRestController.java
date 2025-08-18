@@ -28,10 +28,8 @@ public class UserRestController {
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().build();
         }
-
         User user = userMapper.toEntity(dto);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-
         User savedUser = userRepository.save(user);
         return ResponseEntity.ok(userMapper.toDto(savedUser));
     }
