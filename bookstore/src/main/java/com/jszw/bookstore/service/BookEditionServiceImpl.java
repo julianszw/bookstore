@@ -1,4 +1,4 @@
-package com.jszw.bookstore.service;
+package com.jszw.bookstore.service.impl;
 
 import com.jszw.bookstore.domain.Book;
 import com.jszw.bookstore.domain.BookEdition;
@@ -52,7 +52,6 @@ public class BookEditionServiceImpl implements BookEditionService {
         BookEdition edition = BookEdition.builder()
                 .book(book)
                 .publisher(publisher)
-                .editionNumber(dto.getEdition())
                 .publishedYear(dto.getYear())
                 .build();
 
@@ -70,12 +69,9 @@ public class BookEditionServiceImpl implements BookEditionService {
 
         existing.setBook(book);
         existing.setPublisher(publisher);
-        existing.setEditionNumber(dto.getEdition());
         existing.setPublishedYear(dto.getYear());
 
-        // Opcional: explícito para evitar depender de dirty checking
         repository.save(existing);
-
         return mapper.toDto(existing);
     }
 
@@ -95,12 +91,9 @@ public class BookEditionServiceImpl implements BookEditionService {
             existing.setPublisher(p);
         });
 
-        Optional.ofNullable(dto.getEdition()).ifPresent(existing::setEditionNumber);
         Optional.ofNullable(dto.getYear()).ifPresent(existing::setPublishedYear);
 
-        // Opcional: explícito para evitar depender de dirty checking
         repository.save(existing);
-
         return mapper.toDto(existing);
     }
 

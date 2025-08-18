@@ -14,11 +14,8 @@ public class BookEdition {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Número de edición (1, 2, 3, ...)
     @Positive
-    @Column(name = "edition_number", nullable = false)
-    private Integer editionNumber;
-
+    @Column(name = "published_year")
     private Integer publishedYear;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -28,6 +25,4 @@ public class BookEdition {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id", nullable = false)
     private Publisher publisher;
-
-    private String imageUrl;
 }

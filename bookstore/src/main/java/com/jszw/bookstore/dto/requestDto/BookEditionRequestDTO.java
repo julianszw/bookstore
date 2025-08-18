@@ -6,16 +6,12 @@ import lombok.*;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class BookEditionRequestDTO {
-
     @NotNull
     private Long bookId;
 
     @NotNull
     private Long publisherId;
 
-    @NotNull @Positive
-    private Integer edition;   // número de edición
-
     @Positive
-    private Integer year;
+    private Integer year; // publishedYear
 }
