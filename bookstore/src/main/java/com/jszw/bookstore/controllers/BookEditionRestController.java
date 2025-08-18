@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -29,7 +31,12 @@ public class BookEditionRestController {
 
     @PostMapping
     public ResponseEntity<BookEditionResponseDTO> create(@Valid @RequestBody BookEditionRequestDTO dto) {
-        return ResponseEntity.ok(service.create(dto));
+        BookEditionResponseDTO created = service.create(dto);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(created);
     }
 
     @PutMapping("/{id}")
