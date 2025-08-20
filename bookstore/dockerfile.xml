@@ -1,0 +1,23 @@
+# syntax=docker/dockerfile:1
+
+		# ---- build stage ----
+		FROM maven:3.9.8-eclipse-temurin-21 AS build
+		WORKDIR /app
+		COPY pom.xml .
+		COPY src ./src
+		# compila sin tests
+		RUN mvn -q -DskipTests package
+
+		# ---- runtime stage ----
+		FROM eclipse-temurin:21-jre
+		WORKDIR /app
+		# usuario no-root
+		RUN useradd -m spring
+		USER spring
+		# copia el jar “fat” (Spring Boot) al contenedor
+		COPY --from=build /app/target/*.jar app.jar
+
+		EXPOSE 8080
+		# JAVA_OPTS te permite tunear memoria, GC, etc.
+		ENV JAVA_OPTS=""
+		ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

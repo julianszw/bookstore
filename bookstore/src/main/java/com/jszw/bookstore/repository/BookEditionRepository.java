@@ -21,4 +21,7 @@ public interface BookEditionRepository extends JpaRepository<BookEdition, Long> 
 
     /** Cantidad de ediciones que tiene un libro. */
     long countByBookId(Long bookId);
+
+    /** Para evitar duplicados por ISBN-13. */
+    boolean existsByIsbn13(String isbn13);
 }

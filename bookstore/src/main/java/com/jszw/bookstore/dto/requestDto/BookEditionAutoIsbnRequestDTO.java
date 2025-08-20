@@ -1,11 +1,12 @@
 package com.jszw.bookstore.dto.requestDto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class BookEditionRequestDTO {
+public class BookEditionAutoIsbnRequestDTO {
     @NotNull
     private Long bookId;
 
@@ -13,9 +14,11 @@ public class BookEditionRequestDTO {
     private Long publisherId;
 
     @Positive
-    private Integer year; // publishedYear
+    private Integer year;
 
-    // opcionales en el create "normal"
-    private String isbn13;
-    private String isbn10;
+    @NotBlank
+    private String title;
+
+    @NotBlank
+    private String authorName;
 }

@@ -1,6 +1,7 @@
 package com.jszw.bookstore.controllers;
 
 import com.jszw.bookstore.dto.requestDto.BookEditionRequestDTO;
+import com.jszw.bookstore.dto.requestDto.BookEditionAutoIsbnRequestDTO;
 import com.jszw.bookstore.dto.responseDto.BookEditionResponseDTO;
 import com.jszw.bookstore.service.BookEditionService;
 import jakarta.validation.Valid;
@@ -32,6 +33,19 @@ public class BookEditionRestController {
     @PostMapping
     public ResponseEntity<BookEditionResponseDTO> create(@Valid @RequestBody BookEditionRequestDTO dto) {
         BookEditionResponseDTO created = service.create(dto);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(created);
+    }
+
+    // ===== NUEVO: crea una edición consultando Google Books para traer ISBN =====
+    @PostMapping("/auto-isbn")
+    public ResponseEntity<BookEditionResponseDTO> createWithAutoIsbn(
+            @Valid @RequestBody BookEditionAutoIsbnRequestDTO dto) {
+
+        BookEditionResponseDTO created = service.createWithAutoIsbn(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(created.getId())

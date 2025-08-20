@@ -8,7 +8,10 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
-@Table(name = "book_editions")
+@Table(name = "book_editions",
+        indexes = {
+                @Index(name = "idx_book_editions_isbn13", columnList = "isbn13")
+        })
 public class BookEdition {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +20,12 @@ public class BookEdition {
     @Positive
     @Column(name = "published_year")
     private Integer publishedYear;
+
+    @Column(name = "isbn13", unique = true)
+    private String isbn13;
+
+    @Column(name = "isbn10")
+    private String isbn10;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)

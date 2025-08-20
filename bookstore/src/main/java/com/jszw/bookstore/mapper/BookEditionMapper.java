@@ -19,6 +19,8 @@ public class BookEditionMapper {
                 .id(entity.getId())
                 .year(entity.getPublishedYear())
                 .publisher(publisherMapper.toDto(entity.getPublisher()))
+                .isbn13(entity.getIsbn13())
+                .isbn10(entity.getIsbn10())
                 .build();
     }
 }
